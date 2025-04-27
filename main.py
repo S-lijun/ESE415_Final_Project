@@ -26,7 +26,7 @@ x0 = np.array([1.0, 1.0])
 step_size = 0.01
 max_iters = 1000
 tol = 1e-6
-num_trials = 100
+num_trials = 1000
 
 # Method execution logic
 def run_method(method_fn, f, grad_f, x0, args):
@@ -43,27 +43,6 @@ def find_global_min(f, args):
     return res.fun
 
 # Function evaluation per function type
-#def evaluate_function_type(name, gen_params, f, grad_f, methods):
-    results = {m.__name__: [] for m in methods}
-    true_vals = []
-    for _ in range(num_trials):
-        params = gen_params()
-        true_min = find_global_min(f, params)
-        true_vals.append(true_min)
-        for method in methods:
-            try:
-                val, iters = run_method(method, f, grad_f, x0, params)
-            except Exception as e:
-                val, iters = float('nan'), float('nan')
-            results[method.__name__].append((val, iters))
-
-    print(f"\n===== {name.upper()} =====")
-    print(f"Average True Minimum: {np.mean(true_vals):.4f}")
-    for method in methods:
-        vals = [v for v, _ in results[method.__name__]]
-        iters = [i for _, i in results[method.__name__]]
-        print(f"{method.__name__}: Avg f(x) = {np.nanmean(vals):.4f}, Avg iters = {np.nanmean(iters):.1f}")
-
 
 def evaluate_function_type(name, gen_params, f, grad_f, methods):
     results = {m.__name__: [] for m in methods}
@@ -130,7 +109,7 @@ def evaluate_function_type(name, gen_params, f, grad_f, methods):
 if __name__ == "__main__":
     methods_all = [gradient_descent, exact_line_search, backtracking_line_search, accelerated_gradient]
 
-    #evaluate_function_type("Quadratic", generate_quadratic_params, f_quadratic, grad_quadratic, methods_all)
-    #evaluate_function_type("Rastrigin", generate_rastrigin_params, f_rastrigin, grad_rastrigin, methods_all)
+    evaluate_function_type("Quadratic", generate_quadratic_params, f_quadratic, grad_quadratic, methods_all)
+    evaluate_function_type("Rastrigin", generate_rastrigin_params, f_rastrigin, grad_rastrigin, methods_all)
     evaluate_function_type("Saddle", generate_saddle_params, f_saddle, grad_saddle, methods_all)
     evaluate_function_type("Rosenbrock", generate_rosenbrock_params, f_rosenbrock, grad_rosenbrock, methods_all)
